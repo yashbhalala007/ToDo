@@ -1,0 +1,97 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".SetToDo"
+    android:background="@color/postBackground">
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:layout_editor_absoluteX="8sp"
+            app:layout_editor_absoluteY="8dp">
+
+            <RelativeLayout
+                android:id="@+id/todo_page"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:focusable="true"
+                android:focusableInTouchMode="true">
+
+                <ImageButton
+                    android:id="@+id/todo_date_button"
+                    android:layout_width="41dp"
+                    android:layout_height="38dp"
+                    android:layout_marginLeft="120dp"
+                    android:layout_marginTop="50dp"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/calendar" />
+
+                <TextView
+                    android:id="@+id/todo_display_date"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="30dp"
+                    android:layout_toEndOf="@id/todo_date_button"
+                    android:padding="20sp"
+                    android:text="Select Date"
+                    android:textSize="20sp" />
+
+                <ImageButton
+                    android:id="@+id/todo_time_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@id/todo_display_date"
+                    android:layout_marginLeft="120dp"
+                    android:layout_marginTop="10dp"
+                    android:background="@android:color/transparent"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/time_dialog" />
+
+                <TextView
+                    android:id="@+id/todo_display_time"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_toEndOf="@id/todo_time_button"
+                    android:layout_below="@id/todo_display_date"
+                    android:padding="20sp"
+                    android:text="Select Time"
+                    android:textSize="20sp" />
+
+                <EditText
+                    android:id="@+id/todo_des"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Write Something about Task"
+                    android:background="@drawable/input"
+                    android:ems="10"
+                    android:gravity="start|top"
+                    android:inputType="textMultiLine"
+                    android:padding="15dp"
+                    android:layout_below="@id/todo_display_time"
+                    android:layout_margin="20dp"/>
+
+                <Button
+                    android:id="@+id/todo_send"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Add Task"
+                    android:textSize="20sp"
+                    android:textColor="@android:color/white"
+                    android:textStyle="bold"
+                    android:background="@drawable/button"
+                    android:layout_below="@id/todo_des"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="10dp"
+                    android:padding="15dp" />
+
+            </RelativeLayout>
+
+        </ScrollView>
+
+</RelativeLayout>

@@ -1,5 +1,6 @@
 package com.example.todo;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -20,9 +21,13 @@ import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
+import com.google.android.material.snackbar.Snackbar;
+import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.GoogleAuthCredential;
+import com.google.firebase.auth.GoogleAuthProvider;
 import com.google.firebase.database.annotations.Nullable;
 
 public class LoginActivity extends AppCompatActivity {
@@ -71,6 +76,7 @@ public class LoginActivity extends AppCompatActivity {
             }
         });
         googleSignInOptions=new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+                .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
 
@@ -184,13 +190,30 @@ public class LoginActivity extends AppCompatActivity {
         if(requestCode==100){
             Task<GoogleSignInAccount> task =GoogleSignIn.getSignedInAccountFromIntent(data);
             try{
-                task.getResult(ApiException.class);
-                finish();
-                Intent intent=new Intent(getApplicationContext(),DashboardActivity.class);
-                startActivity(intent);
+                GoogleSignInAccount account=task.getResult(ApiException.class);
+                firebaseAuthwithGoogle(account);
             } catch (ApiException e) {
                 e.printStackTrace();
             }
         }
+    }
+
+    private void firebaseAuthwithGoogle(GoogleSignInAccount account) {
+        AuthCredential authCredential= GoogleAuthProvider.getCredential(account.getIdToken(),null);
+        mAuth.signInWithCredential(authCredential)
+                .addOnCompleteListener(this, new OnCompleteListener<AuthResult>() {
+                    @Override
+                    public void onComplete(@NonNull Task<AuthResult> task) {
+                        if(task.isSuccessful()){
+                            Toast.makeText(LoginActivity.this, "Logged In", Toast.LENGTH_SHORT).show();
+                            FirebaseUser user=mAuth.getCurrentUser();
+                            finish();
+                            Intent intent=new Intent(getApplicationContext(),DashboardActivity.class);
+                            startActivity(intent);
+                        }else {
+                            Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+                });
     }
 }

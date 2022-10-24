@@ -5,23 +5,44 @@
     android:layout_height="match_parent"
     android:background="@color/postBackground">
 
-    <Button
-        android:id="@+id/delete_all_task"
-        android:layout_width="match_parent"
+    <LinearLayout
+        android:id="@+id/linear_all"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:background="@drawable/button"
-        android:layout_marginStart="20dp"
-        android:layout_marginEnd="20dp"
-        android:layout_marginTop="5dp"
-        android:text="Delete All Task"
-        android:textColor="@android:color/white"
-        android:textStyle="bold"/>
+        android:layout_centerHorizontal="true">
+
+        <EditText
+            android:id="@+id/all_task_search"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="20sp"
+            android:layout_marginTop="5dp"
+            android:paddingBottom="10sp"
+            android:paddingEnd="20dp"
+            android:paddingTop="10sp"
+            android:paddingStart="20dp"
+            android:hint="Search task here"
+            android:background="@drawable/input" />
+
+        <Button
+            android:id="@+id/delete_all_task"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button"
+            android:text="Delete ALL"
+            android:textColor="@android:color/white"
+            android:textStyle="bold"
+            android:layout_marginStart="10dp"
+            android:layout_marginTop="5dp"
+            android:padding="10sp"
+            android:layout_toEndOf="@id/all_task_search"/>
+    </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/todo_all_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="10dp"
-        android:layout_below="@id/delete_all_task"/>
+        android:layout_below="@id/linear_all"/>
 
 </RelativeLayout>

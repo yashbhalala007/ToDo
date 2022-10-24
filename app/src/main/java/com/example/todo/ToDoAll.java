@@ -1,10 +1,14 @@
 package com.example.todo;
 
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -18,6 +22,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 public class ToDoAll extends Fragment {
@@ -26,6 +31,7 @@ public class ToDoAll extends Fragment {
     private DatabaseReference usersRef, taskRef;
     private FirebaseAuth mAuth;
     private Button deleteAll;
+    private EditText search;
 
     private String current_user_id;
 
@@ -41,6 +47,7 @@ public class ToDoAll extends Fragment {
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
         deleteAll = view.findViewById(R.id.delete_all_task);
+        search = view.findViewById(R.id.all_task_search);
 
         taskRef = FirebaseDatabase.getInstance().getReference().child("Tasks").child(current_user_id);
         recyclerView = view.findViewById(R.id.todo_all_list);
@@ -70,6 +77,30 @@ public class ToDoAll extends Fragment {
             }
         });
 
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+
+            }
+
+            @Override
+            public void afterTextChanged(Editable s) {
+                String st = search.getText().toString().trim();
+                if (TextUtils.isEmpty(st)){
+                    displayAllRequest(taskRef);
+                }else {
+                    Query query = taskRef.orderByChild("task")
+                            .startAt(st).endAt(st + "\uf8ff");
+                    displayAllRequest(query);
+                }
+            }
+        });
+
         return view;
 
 
@@ -78,14 +109,14 @@ public class ToDoAll extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        displayAllRequest();
+        displayAllRequest(taskRef);
     }
 
-    private void displayAllRequest() {
+    private void displayAllRequest( Query query) {
 
                     FirebaseRecyclerOptions<AllRequest> options =
                             new FirebaseRecyclerOptions.Builder<AllRequest>()
-                                    .setQuery(taskRef, AllRequest.class)
+                                    .setQuery(query, AllRequest.class)
                                     .build();
 
                     firebaseRecyclerAdapter =

@@ -14,11 +14,14 @@ import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -136,6 +139,13 @@ public class ToDoPending extends Fragment {
                                             deleteTaskDialog(postKey);
                                         }
                                     });
+
+                                    holder.btn3.setOnClickListener(new View.OnClickListener() {
+                                        @Override
+                                        public void onClick(View v) {
+                                            updateTaskDialog(postKey, model.getTask(), model.getDate(), model.getTime());
+                                        }
+                                    });
                                 }
 
                                 @NonNull
@@ -162,6 +172,129 @@ public class ToDoPending extends Fragment {
 
         });
 
+    }
+
+    private void updateTaskDialog(final String postKey, final String task, final String Date, final String Time) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Update Task");
+
+        LinearLayout linearLayout = new LinearLayout(getContext());
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        linearLayout.setOrientation(LinearLayout.VERTICAL);
+
+        LinearLayout linearLayout1 = new LinearLayout(getContext());
+        LinearLayout.LayoutParams params1 = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        linearLayout1.setOrientation(LinearLayout.HORIZONTAL);
+
+        final ImageButton imageButton = new ImageButton(getContext());
+        imageButton.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.calendar));
+        imageButton.setLayoutParams(params1);
+
+        final TextView textView = new TextView(getContext());
+        textView.setTextSize(14);
+        textView.setText(Date);
+        textView.setLayoutParams(params1);
+
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new SetToDo.MyDatePickerFragment(textView);
+                newFragment.show(getFragmentManager(), "date picker");
+            }
+        });
+
+        linearLayout1.addView(imageButton);
+        linearLayout1.addView(textView);
+
+        linearLayout.addView(linearLayout1);
+
+        LinearLayout linearLayout2 = new LinearLayout(getContext());
+        linearLayout2.setOrientation(LinearLayout.HORIZONTAL);
+
+        final ImageButton imageButton2 = new ImageButton(getContext());
+        imageButton2.setBackground(ContextCompat.getDrawable(getContext(), R.drawable.time_dialog));
+        imageButton2.setLayoutParams(params1);
+
+        final TextView textView1 = new TextView(getContext());
+        textView1.setTextSize(14);
+        textView1.setText(Time);
+        textView1.setLayoutParams(params1);
+
+        imageButton2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment1 = new TimePicker(textView1);
+                newFragment1.show(getFragmentManager(), "time picker");
+            }
+        });
+
+        linearLayout2.addView(imageButton2);
+        linearLayout2.addView(textView1);
+
+        linearLayout.addView(linearLayout2);
+
+        final EditText editText = new EditText(getContext());
+        editText.setText(task);
+        editText.setLayoutParams(params);
+
+        linearLayout.addView(editText);
+
+        builder.setView(linearLayout);
+
+        builder.setCancelable(false)
+                .setPositiveButton("UPDATE",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int id) {
+                                // what to do if YES is tapped
+
+                                final String selectedDate = textView.getText().toString();
+                                final String selectedTime = textView1.getText().toString();
+                                final String selectedTask = editText.getText().toString();
+
+                                taskRef.child(postKey).addValueEventListener(new ValueEventListener() {
+                                    @Override
+                                    public void onDataChange(@NonNull final DataSnapshot dataSnapshot) {
+
+                                        if (dataSnapshot.exists()) {
+
+                                            HashMap postMap = new HashMap();
+                                            postMap.put("date", selectedDate);
+                                            postMap.put("time", selectedTime);
+                                            postMap.put("task", selectedTask);
+
+                                            taskRef.child(postKey).updateChildren(postMap)
+                                                    .addOnCompleteListener(new OnCompleteListener() {
+                                                        @Override
+                                                        public void onComplete(@NonNull Task task) {
+                                                            if (task.isSuccessful()){
+                                                                Toast.makeText(getContext(),"Updated SuccessFully", Toast.LENGTH_LONG).show();
+                                                            }
+                                                            else {
+                                                                Toast.makeText(getContext(),"Error 1", Toast.LENGTH_LONG).show();
+                                                            }
+                                                        }
+                                                    });
+                                        }
+                                    }
+
+                                    @Override
+                                    public void onCancelled(@NonNull DatabaseError databaseError) {
+
+                                    }
+                                });
+                            }
+                        })
+                .setNegativeButton("CANCLE",
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int id) {
+                                // code to do on NO tapped
+                                dialog.cancel();
+                            }
+                        });
+        Dialog dialog = builder.create();
+        dialog.show();
     }
 
     private void deleteTaskDialog(final String postKey) {
@@ -235,7 +368,7 @@ public class ToDoPending extends Fragment {
     public static class PendingTaskViewHolder extends RecyclerView.ViewHolder{
 
         private TextView task, date, time;
-        private Button btn, btn2;
+        private Button btn, btn2, btn3;
 
         public PendingTaskViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -245,6 +378,7 @@ public class ToDoPending extends Fragment {
             time = itemView.findViewById(R.id.pending_task_time);
             btn = itemView.findViewById(R.id.pending_task_complete_button);
             btn2 = itemView.findViewById(R.id.pending_task_delete_button);
+            btn3 = itemView.findViewById(R.id.pending_task_update_button);
         }
     }
 }

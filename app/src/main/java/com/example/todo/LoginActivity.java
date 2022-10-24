@@ -36,6 +36,8 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.Nullable;
 
+import java.util.HashMap;
+
 public class LoginActivity extends AppCompatActivity {
 
     private EditText email, pass;
@@ -60,7 +62,7 @@ public class LoginActivity extends AppCompatActivity {
         btn_google=findViewById(R.id.google);
         btn_google.setSize(SignInButton.SIZE_WIDE);
         mAuth = FirebaseAuth.getInstance();
-        mDatabase = FirebaseDatabase.getInstance().getReference().child("User");
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("Users");
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -213,12 +215,29 @@ public class LoginActivity extends AppCompatActivity {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
-                            FirebaseUser user=mAuth.getCurrentUser();
-                            User user1=new User(account.getDisplayName(),account.getEmail(),account.getPhotoUrl());
-                            mDatabase.child(mAuth.getUid()).push().setValue(user1);
-                            finish();
-                            Intent intent=new Intent(getApplicationContext(),DashboardActivity.class);
-                            startActivity(intent);
+                            FirebaseUser user = mAuth.getCurrentUser();
+
+                            HashMap postMap = new HashMap();
+                            postMap.put("name", account.getDisplayName());
+                            postMap.put("email", account.getEmail());
+                            postMap.put("profileImage", account.getPhotoUrl());
+                            Toast.makeText(LoginActivity.this, ""+mAuth.getCurrentUser().getUid(), Toast.LENGTH_SHORT).show();
+                            User user1 =new User(account.getDisplayName(),account.getEmail(),account.getPhotoUrl().toString());
+                            mDatabase.child(mAuth.getCurrentUser().getUid()).setValue(user1)
+                                            .addOnCompleteListener(new OnCompleteListener() {
+                                                @Override
+                                                public void onComplete(@NonNull Task task) {
+                                                    if(task.isSuccessful()) {
+                                                        Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                                                        startActivity(intent);
+                                                        finish();
+                                                    }else{
+                                                        Toast.makeText(LoginActivity.this, "Error", Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }
+                                            });
+
+
                         }else {
                             Toast.makeText(LoginActivity.this, "Login Failed", Toast.LENGTH_SHORT).show();
                         }

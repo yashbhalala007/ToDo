@@ -100,10 +100,6 @@ public class DashboardActivity extends AppCompatActivity {
             }
         });
 
-//        GoogleSignInAccount googleSignInAccount= GoogleSignIn.getLastSignedInAccount(this);
-//        if(googleSignInAccount!=null){
-//
-//        }
         logoutButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -140,7 +136,7 @@ public class DashboardActivity extends AppCompatActivity {
                                 System.exit(0);
                             }
                         })
-                .setNegativeButton("CANCLE",
+                .setNegativeButton("CANCEL",
                         new DialogInterface.OnClickListener() {
                             public void onClick(DialogInterface dialog,
                                                 int id) {

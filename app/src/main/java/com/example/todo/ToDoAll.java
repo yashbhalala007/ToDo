@@ -67,6 +67,7 @@ public class ToDoAll extends Fragment {
                             String key = dataSnapshot.getKey();
                             taskRef.child(key).removeValue();
                         }
+                        displayAllRequest(taskRef);
                     }
 
                     @Override

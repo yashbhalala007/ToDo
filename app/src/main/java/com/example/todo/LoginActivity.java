@@ -29,6 +29,11 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.GoogleAuthCredential;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 import com.google.firebase.database.annotations.Nullable;
 
 public class LoginActivity extends AppCompatActivity {
@@ -39,7 +44,7 @@ public class LoginActivity extends AppCompatActivity {
     private SignInButton btn_google;
     GoogleSignInOptions googleSignInOptions;
     GoogleSignInClient googleSignInClient;
-
+    private DatabaseReference mDatabase;
     private FirebaseAuth mAuth;
 
     @Override
@@ -55,7 +60,7 @@ public class LoginActivity extends AppCompatActivity {
         btn_google=findViewById(R.id.google);
         btn_google.setSize(SignInButton.SIZE_WIDE);
         mAuth = FirebaseAuth.getInstance();
-
+        mDatabase = FirebaseDatabase.getInstance().getReference().child("User");
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -209,6 +214,8 @@ public class LoginActivity extends AppCompatActivity {
                     public void onComplete(@NonNull Task<AuthResult> task) {
                         if(task.isSuccessful()){
                             FirebaseUser user=mAuth.getCurrentUser();
+                            User user1=new User(account.getDisplayName(),account.getEmail(),account.getPhotoUrl());
+                            mDatabase.child(mAuth.getUid()).push().setValue(user1);
                             finish();
                             Intent intent=new Intent(getApplicationContext(),DashboardActivity.class);
                             startActivity(intent);

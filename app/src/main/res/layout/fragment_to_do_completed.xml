@@ -5,9 +5,23 @@
     android:layout_height="match_parent"
     android:background="@color/postBackground">
 
+    <Button
+        android:id="@+id/delete_completed_task"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/button"
+        android:layout_marginStart="20dp"
+        android:layout_marginEnd="20dp"
+        android:layout_marginTop="5dp"
+        android:text="Delete All Task"
+        android:textColor="@android:color/white"
+        android:textStyle="bold"/>
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/todo_completed_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="10dp"
+        android:layout_below="@id/delete_completed_task"/>
 
 </RelativeLayout>

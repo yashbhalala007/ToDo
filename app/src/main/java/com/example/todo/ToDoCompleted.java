@@ -44,6 +44,8 @@ public class ToDoCompleted extends Fragment {
     private DatabaseReference taskRef;
     private FirebaseAuth mAuth;
 
+    private Button deleteAll;
+
     private String current_user_id;
 
     private FirebaseRecyclerAdapter<AllRequest, CompleteTaskViewHolder> firebaseRecyclerAdapter;
@@ -59,6 +61,31 @@ public class ToDoCompleted extends Fragment {
 
         taskRef = FirebaseDatabase.getInstance().getReference().child("Tasks").child(current_user_id);
 
+        deleteAll = view.findViewById(R.id.delete_completed_task);
+
+        deleteAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                taskRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                            String status = dataSnapshot.child("status").getValue().toString();
+                            if(status.equals("Completed")) {
+                                String key = dataSnapshot.getKey();
+                                taskRef.child(key).removeValue();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
+
         recyclerView = view.findViewById(R.id.todo_completed_list);
         recyclerView.setHasFixedSize(true);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getContext());
@@ -72,10 +99,10 @@ public class ToDoCompleted extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        displayPendingMeeting();
+        displayCompletedMeeting();
     }
 
-    private void displayPendingMeeting() {
+    private void displayCompletedMeeting() {
         taskRef.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {

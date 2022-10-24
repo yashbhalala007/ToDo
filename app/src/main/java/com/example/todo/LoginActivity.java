@@ -18,6 +18,7 @@ import com.google.android.gms.auth.api.signin.GoogleSignIn;
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount;
 import com.google.android.gms.auth.api.signin.GoogleSignInClient;
 import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.common.SignInButton;
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
@@ -34,7 +35,8 @@ public class LoginActivity extends AppCompatActivity {
 
     private EditText email, pass;
     private TextView forgetPass, register;
-    private Button loginButton,btn_google;
+    private Button loginButton;
+    private SignInButton btn_google;
     GoogleSignInOptions googleSignInOptions;
     GoogleSignInClient googleSignInClient;
 
@@ -51,6 +53,7 @@ public class LoginActivity extends AppCompatActivity {
         register = findViewById(R.id.login_new_user_text);
         loginButton = findViewById(R.id.login_button);
         btn_google=findViewById(R.id.google);
+        btn_google.setSize(SignInButton.SIZE_WIDE);
         mAuth = FirebaseAuth.getInstance();
 
         loginButton.setOnClickListener(new View.OnClickListener() {

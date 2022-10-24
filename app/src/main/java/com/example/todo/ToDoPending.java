@@ -44,6 +44,8 @@ public class ToDoPending extends Fragment {
     private DatabaseReference taskRef;
     private FirebaseAuth mAuth;
 
+    private Button deleteAll;
+
     private String current_user_id;
 
     private FirebaseRecyclerAdapter<AllRequest, PendingTaskViewHolder> firebaseRecyclerAdapter;
@@ -57,6 +59,31 @@ public class ToDoPending extends Fragment {
         current_user_id = mAuth.getUid();
 
         taskRef = FirebaseDatabase.getInstance().getReference().child("Tasks").child(current_user_id);
+
+        deleteAll = view.findViewById(R.id.delete_pending_task);
+
+        deleteAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                taskRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                            String status = dataSnapshot.child("status").getValue().toString();
+                            if(status.equals("Pending")) {
+                                String key = dataSnapshot.getKey();
+                                taskRef.child(key).removeValue();
+                            }
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
 
         recyclerView = view.findViewById(R.id.todo_pending_list);
         recyclerView.setHasFixedSize(true);

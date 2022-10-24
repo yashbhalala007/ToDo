@@ -4,6 +4,7 @@ import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -13,14 +14,18 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.firebase.ui.database.*;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 public class ToDoAll extends Fragment {
 
     private RecyclerView recyclerView;
     private DatabaseReference usersRef, taskRef;
     private FirebaseAuth mAuth;
+    private Button deleteAll;
 
     private String current_user_id;
 
@@ -35,6 +40,8 @@ public class ToDoAll extends Fragment {
         current_user_id = mAuth.getUid();
         usersRef = FirebaseDatabase.getInstance().getReference().child("Users");
 
+        deleteAll = view.findViewById(R.id.delete_all_task);
+
         taskRef = FirebaseDatabase.getInstance().getReference().child("Tasks").child(current_user_id);
         recyclerView = view.findViewById(R.id.todo_all_list);
         recyclerView.setHasFixedSize(true);
@@ -42,7 +49,30 @@ public class ToDoAll extends Fragment {
         linearLayoutManager.setReverseLayout(true);
         linearLayoutManager.setStackFromEnd(true);
         recyclerView.setLayoutManager(linearLayoutManager);
+
+        deleteAll.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                taskRef.addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()){
+                            String key = dataSnapshot.getKey();
+                            taskRef.child(key).removeValue();
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+
+                    }
+                });
+            }
+        });
+
         return view;
+
+
     }
 
     @Override

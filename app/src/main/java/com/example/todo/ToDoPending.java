@@ -1,29 +1,22 @@
 package com.example.todo;
 
-import android.app.Activity;
 import android.app.Dialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AlertDialog;
-import androidx.core.content.ContextCompat;
 import androidx.fragment.app.DialogFragment;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
-import android.text.Editable;
-import android.text.TextUtils;
-import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -178,7 +171,49 @@ public class ToDoPending extends Fragment {
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
         builder.setTitle("Update Task");
 
-        LinearLayout linearLayout = new LinearLayout(getContext());
+        LayoutInflater layoutInflater = requireActivity().getLayoutInflater();
+
+        View view = layoutInflater.inflate(R.layout.activity_alert_dialog, null);
+
+        builder.setView(view);
+
+        TextView textView = (TextView) view.findViewById(R.id.alert_display_date);
+        textView.setText(Date);
+
+        TextView textView1 = (TextView) view.findViewById(R.id.alert_display_time);
+        textView1.setText(Time);
+
+        EditText editText = (EditText) view.findViewById(R.id.alert_des);
+        editText.setText(task);
+
+        ImageButton imageButton = (ImageButton) view.findViewById(R.id.alert_date_button);
+        imageButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment = new SetToDo.MyDatePickerFragment(textView);
+                newFragment.show(getFragmentManager(), "date picker");
+            }
+        });
+
+
+        ImageButton imageButton1 = (ImageButton) view.findViewById(R.id.alert_time_button);
+
+        imageButton1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DialogFragment newFragment1 = new TimePicker(textView1);
+                newFragment1.show(getFragmentManager(), "time picker");
+            }
+        });
+
+
+
+
+
+
+
+
+        /*LinearLayout linearLayout = new LinearLayout(getContext());
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         linearLayout.setOrientation(LinearLayout.VERTICAL);
 
@@ -239,7 +274,7 @@ public class ToDoPending extends Fragment {
 
         linearLayout.addView(editText);
 
-        builder.setView(linearLayout);
+        builder.setView(linearLayout);*/
 
         builder.setCancelable(false)
                 .setPositiveButton("UPDATE",

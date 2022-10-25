@@ -10,7 +10,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:background="@drawable/button"
-            android:text="Delete Task"
+            android:text="Delete All Task"
             android:textColor="@android:color/white"
             android:textStyle="bold"
             android:layout_marginStart="10dp"
